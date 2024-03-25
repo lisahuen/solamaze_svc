@@ -25,7 +25,7 @@ def job_start():
 
 def maze_generate():
 
-    nx, ny = 20, 15
+    nx, ny = 20 , 15
     # # Maze entry position
     ix, iy = 0, 0
     cx, cy = 0, 0

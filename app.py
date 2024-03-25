@@ -1,9 +1,14 @@
 from flask import Flask, request, jsonify
+from flask_cors import CORS
 from maze_run import job_start
 import general
 import threading
 
 app = Flask(__name__)
+CORS(app)
+CORS(app, origins='http://localhost:3000')
+
+
 
 # Create a separate thread for the background task
 background_thread = threading.Thread(target=job_start)
