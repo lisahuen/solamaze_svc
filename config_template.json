@@ -1,0 +1,15 @@
+{
+    "Common":{
+         "ServerInfo": {
+            "Server": "severxxx",
+            "DBList": "dbname",
+            "User": "username",
+            "Pwd": "pwd",
+            "PortNo": 1234
+        }
+      
+    }
+
+
+
+}
