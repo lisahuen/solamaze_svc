@@ -139,9 +139,48 @@ class Maze:
                   .format(sx1, sy1, sx2, sy2), file=f)
 
         def add_cell_rect(f, x, y, colour):
+            # pad = 5
+            # print(f'<rect x="{scx * x + pad}" y="{scy * y + pad}" width="{scx - 2 * pad}"'
+            #       f' height="{scy - 2 * pad}" style="fill:{colour}" />', file=f)
             pad = 5
-            print(f'<rect x="{scx * x + pad}" y="{scy * y + pad}" width="{scx - 2 * pad}"'
-                  f' height="{scy - 2 * pad}" style="fill:{colour}" />', file=f)
+            icon_width = scx - 2 * pad  # Adjust the width of the icon as needed
+            icon_height = scy - 2 * pad  # Adjust the height of the icon as needed
+            x_pos = scx * x + pad
+            y_pos = scy * y + pad
+            icon_file = './icon.png'  # Replace with the actual path to your JPG file
+            print('<image xlink:href="{}" x="{}" y="{}" width="{}" height="{}" />'
+                  .format(icon_file, x_pos, y_pos, icon_width, icon_height), file=f)
+
+
+        def add_start_icon(f, x, y):
+            pad = 5
+            icon_width = scx - 2 * pad  # Adjust the width of the icon as needed
+            icon_height = scy - 2 * pad  # Adjust the height of the icon as needed
+            x_pos = scx * x + pad
+            y_pos = scy * y + pad
+            icon_file = './start_icon.png'  # Replace with the actual path to your JPG file
+            print('<image xlink:href="{}" x="{}" y="{}" width="{}" height="{}" />'
+                  .format(icon_file, x_pos, y_pos, icon_width, icon_height), file=f)
+
+        def add_end_icon(f, x, y):
+            pad = 5
+            icon_width = scx - 2 * pad  # Adjust the width of the icon as needed
+            icon_height = scy - 2 * pad  # Adjust the height of the icon as needed
+            x_pos = scx * x + pad
+            y_pos = scy * y + pad
+            icon_file = './end_icon.png'  # Replace with the actual path to your JPG file
+            print('<image xlink:href="{}" x="{}" y="{}" width="{}" height="{}" />'
+                  .format(icon_file, x_pos, y_pos, icon_width, icon_height), file=f)
+
+        def add_move_icon(f, x, y):
+            pad = 5
+            icon_width = scx - 2 * pad  # Adjust the width of the icon as needed
+            icon_height = scy - 2 * pad  # Adjust the height of the icon as needed
+            x_pos = scx * x + pad
+            y_pos = scy * y + pad
+            icon_file = './move_icon.png'  # Replace with the actual path to your JPG file
+            print('<image xlink:href="{}" x="{}" y="{}" width="{}" height="{}" />'
+                  .format(icon_file, x_pos, y_pos, icon_width, icon_height), file=f)
 
         def add_path_segment(f, cell, next_cell):
             sx1, sy1 = scx * (cell.x + 0.5), scy * (cell.y + 0.5)
@@ -187,11 +226,14 @@ class Maze:
             # print('<line x1="0" y1="0" x2="0" y2="{}"/>'.format(height), file=f)
 
             if self.add_begin_end:
-                add_cell_rect(f, 0, 0, 'green')
-                add_cell_rect(f, self.nx - 1, self.ny - 1, 'red')
-                add_cell_rect(f, self.cx, self.cy, 'yellow')
-            if self.add_treasure:
-                add_cell_rect(f, self.treasure_x, self.treasure_y, 'yellow')
+                # add_cell_rect(f, 0, 0, 'green')
+                add_start_icon(f,0,0)
+                # add_cell_rect(f, self.nx - 1, self.ny - 1, 'red')
+                add_end_icon(f, self.nx - 1, self.ny - 1)
+                # add_cell_rect(f, self.cx, self.cy, 'yellow')
+                add_move_icon(f,self.cx, self.cy)
+                # add_icon(f,3,3)
+                # add_cell_rect(f, self.treasure_x, self.treasure_y, 'yellow')
 
             print('</svg>', file=f)
 
