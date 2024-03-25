@@ -96,15 +96,25 @@ class Maze:
 
     def update_maze(self,movement):
 
+        success_move = 0
+        goal = 0
         # print(self.cell_at(self.cx, self.cy + 1).walls['N'])
         if movement == 'N' and not self.cell_at(self.cx, self.cy).walls['N']:
              self.cy -= 1
+             success_move = 1
         if movement == 'S' and not self.cell_at(self.cx, self.cy).walls['S']:
              self.cy += 1
+             success_move = 1
         if movement == 'E' and not self.cell_at(self.cx, self.cy).walls['E']:
              self.cx += 1
+             success_move = 1
         if movement == 'W' and not self.cell_at(self.cx, self.cy).walls['W']:
              self.cx -= 1
+             success_move = 1
+        if self.cy == self.ny-1 and self.cx == self.nx-1:
+            goal = 1
+
+        return success_move, goal
 
     def write_svg(self, filename, solution=False):
         """Write an SVG image of the maze to filename."""
@@ -183,9 +193,9 @@ class Maze:
             if self.add_treasure:
                 add_cell_rect(f, self.treasure_x, self.treasure_y, 'yellow')
 
-
-
             print('</svg>', file=f)
+
+
 
     def find_valid_neighbours(self, cell):
         """Return a list of unvisited neighbours to cell."""
