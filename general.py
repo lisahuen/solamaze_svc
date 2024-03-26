@@ -22,7 +22,8 @@ def connectDatabaseMysqlConnector():
         raise ValueError("error in connect to db")
 
 def getTransByID(maze_id, tran_id):
-
+    # maze_id = 'c8472ce9de0647529b2853778cfda6f8'
+    # tran_id= 24
     mSQL = "select move_addr, move_sgn, move_direction, success_move, goal, svg_image  " \
            "from maze_transaction where maze_id = '%s'  and tran_id=%s;" % (maze_id,tran_id)
 

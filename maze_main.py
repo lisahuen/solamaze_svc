@@ -200,7 +200,7 @@ class Maze:
                   file=f)
             print('<defs>\n<style type="text/css"><![CDATA[', file=f)
             print('line {', file=f)
-            print('    stroke: #000000;\n    stroke-linecap: square;', file=f)
+            print('    stroke: #aca788;\n    stroke-linecap: round;', file=f)
             print('    stroke-width: 5;\n}', file=f)
             print(']]></style>\n</defs>', file=f)
             # Draw the "South" and "East" walls of each cell, if present (these

@@ -40,8 +40,6 @@ def api_get_tran():
     data = request.get_json()
     maze_id = data.get('maze_id')
     tran_id = data.get('tran_id')
-    print(maze_id)
-    print(tran_id)
     response = general.getTransByID(maze_id,tran_id)
 
     return response
