@@ -11,22 +11,22 @@ import string
 def job_start():
 
     goal = 1
-    while 1==1:
-        if goal == 1:
-            maze, uuid = maze_generate()
-            tran_id=2
-            goal = 0
-        else:
-            while not goal:
-                print(tran_id)
-                goal = maze_run(maze, uuid,tran_id)
-                tran_id += 1
-
-            print("completed maze: %s" % uuid)
+    # while 1==1:
+    #     if goal == 1:
+    #         maze, uuid = maze_generate()
+    #         tran_id=2
+    #         goal = 0
+    #     else:
+    #         while not goal:
+    #             print(tran_id)
+    #             goal = maze_run(maze, uuid,tran_id)
+    #             tran_id += 1
+    #
+    #         print("completed maze: %s" % uuid)
 
 def maze_generate():
 
-    nx, ny = 20 , 10
+    nx, ny = 2 , 2
     # # Maze entry position
     ix, iy = 0, 0
     cx, cy = 0, 0
@@ -67,6 +67,7 @@ def maze_generate():
 def generate_random_string(length):
     letters = string.ascii_letters + string.digits
     return ''.join(random.choice(letters) for _ in range(length))
+
 def direction_gen():
 
     directions = ["E", "W", "S", "N"]
@@ -99,7 +100,6 @@ def maze_run(maze, uuid, tran_id):
             "values('%s','%s','%s','%s','%s',%s,%s,'%s','%s');" \
             % (uuid, tran_id, direction, move_addr, move_sgn, success_move,goal, mCurrentTime, svg_content)
 
-    #
     with general.connectDatabaseMysqlConnector() as dbConnect:
         cursor = dbConnect.cursor()
         cursor.execute(mSQL2)
@@ -115,6 +115,7 @@ def maze_run(maze, uuid, tran_id):
                 % (mCurrentTime,move_addr, move_sgn, uuid)
 
         with general.connectDatabaseMysqlConnector() as dbConnect:
+            cursor = dbConnect.cursor()
             cursor.execute(mSQL5)
             dbConnect.commit()
 
