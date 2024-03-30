@@ -1,6 +1,8 @@
 from urllib.parse import quote
 import mysql.connector
 import json
+from flask import Flask, make_response
+
 
 with open('./config.json', 'r') as f:
     config_data = json.load(f)
@@ -37,7 +39,7 @@ def getTransByID(maze_id, tran_id):
         json_data = json.dumps(result)
         return json_data
     else:
-        return 0
+        return make_response('')
 
 
 
@@ -54,12 +56,12 @@ def getStartDisplayTransID():
         json_data = json.dumps(result)
         return json_data
     else:
-        return 0
+        return make_response('')
 
 
 def getWinHistory():
 
-    mSQL = 'select maze_id, finish_dt, winner_addr, winner_sgn From maze_master  where status in (0,2) and finish_dt is not null  order by finish_dt desc limit 10;'
+    mSQL = 'select maze_id, finish_dt, move, winner_addr, winner_sgn From maze_master  where status in (0,2) and finish_dt is not null  order by finish_dt desc limit 10;'
     with connectDatabaseMysqlConnector() as dbConnect:
         cursor = dbConnect.cursor()
         cursor.execute(mSQL)
@@ -67,7 +69,7 @@ def getWinHistory():
 
     results = []
     for row in rows:
-        result = {'maze_id': row[0], 'finish_dt': str(row[1]), 'winner_addr': row[2], 'winner_sgn': row[3]}
+        result = {'maze_id': row[0], 'finish_dt': str(row[1]), 'move':row[2],'winner_addr': row[3], 'winner_sgn': row[4]}
         results.append(result)
 
     # Convert results to JSON format
