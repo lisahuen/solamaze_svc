@@ -26,7 +26,7 @@ def job_start():
 
 def maze_generate():
 
-    nx, ny = 20 , 15
+    nx, ny = 2  , 2
     # # Maze entry position
     ix, iy = 0, 0
     cx, cy = 0, 0
@@ -109,6 +109,7 @@ def maze_run(maze, uuid, tran_id):
     if goal:
         mCurrentTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+        mSQL3 = "update maze_master set status=0 where status=2;"
         mSQL5 = "update maze_master set status=2, move=%s, finish_dt='%s', " \
                 "winner_addr = '%s', winner_sgn = '%s' " \
                 "where maze_id = '%s';" \
@@ -116,6 +117,7 @@ def maze_run(maze, uuid, tran_id):
 
         with general.connectDatabaseMysqlConnector() as dbConnect:
             cursor = dbConnect.cursor()
+            cursor.execute(mSQL3)
             cursor.execute(mSQL5)
             dbConnect.commit()
 
@@ -124,14 +126,14 @@ def maze_run(maze, uuid, tran_id):
     return goal
 
 def clear_table():
-    mSQL3 = "update maze_master set status=0 where status=2;"
+    # mSQL3 = "update maze_master set status=0 where status=2;"
     mSQL4 = "update maze_master set status=2 where status=1;"
     mSQL6 = "delete From maze_transaction a where maze_id in " \
             "(select maze_id from maze_master b where a.maze_id =b.maze_id and b.status=0);"
 
     with general.connectDatabaseMysqlConnector() as dbConnect:
         cursor = dbConnect.cursor()
-        cursor.execute(mSQL3)
+        # cursor.execute(mSQL3)
         cursor.execute(mSQL4)
         cursor.execute(mSQL6)
         dbConnect.commit()
