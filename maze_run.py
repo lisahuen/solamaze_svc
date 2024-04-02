@@ -4,6 +4,7 @@ import time
 import datetime
 import general
 import uuid
+import transaction
 
 import os
 import string
@@ -26,7 +27,7 @@ def job_start():
 
 def maze_generate():
 
-    nx, ny = 2  , 2
+    nx, ny = 2 , 2
     # # Maze entry position
     ix, iy = 0, 0
     cx, cy = 0, 0
@@ -64,26 +65,92 @@ def maze_generate():
     # call maze_run(maze, mUUID)
 
 
-def generate_random_string(length):
-    letters = string.ascii_letters + string.digits
-    return ''.join(random.choice(letters) for _ in range(length))
+def distribute_character(character):
+    if not isinstance(character, str) or len(character) != 1 or not character.isalnum():
+        raise ValueError("Input must be a single alphanumeric character.")
+
+    mapping = {
+        "0": "N",
+        "1": "S",
+        "2": "E",
+        "3": "W",
+        "4": "N",
+        "5": "S",
+        "6": "E",
+        "7": "W",
+        "8": "N",
+        "9": "S",
+        "A": "E",
+        "B": "W",
+        "C": "N",
+        "D": "S",
+        "E": "E",
+        "F": "W",
+        "G": "N",
+        "H": "S",
+        "I": "E",
+        "J": "W",
+        "K": "N",
+        "L": "S",
+        "M": "E",
+        "N": "W",
+        "O": "N",
+        "P": "S",
+        "Q": "E",
+        "R": "W",
+        "S": "N",
+        "T": "S",
+        "U": "E",
+        "V": "W",
+        "W": "N",
+        "X": "S",
+        "Y": "E",
+        "Z": "W",
+        "a": "N",
+        "b": "S",
+        "c": "E",
+        "d": "W",
+        "e": "N",
+        "f": "S",
+        "g": "E",
+        "h": "W",
+        "i": "N",
+        "j": "S",
+        "k": "E",
+        "l": "W",
+        "m": "N",
+        "n": "S",
+        "o": "E",
+        "p": "W",
+        "q": "N",
+        "r": "S",
+        "s": "E",
+        "t": "W",
+        "u": "N",
+        "v": "S",
+        "w": "E",
+        "x": "W",
+        "y": "N",
+        "z": "S",
+    }
+
+    direction = mapping.get(character, None)
+
+    if direction is None:
+        raise ValueError("No mapping found for the input character.")
+
+    return direction
 
 def direction_gen():
 
-    directions = ["E", "W", "S", "N"]
-    random_direction = random.choice(directions)
-    move_addr = generate_random_string(44)
-    move_sgn = generate_random_string(88)
+    hash_now, move_sgn, move_addr = transaction.get_latest_transaction()
 
-    # move_addr = 'DRCEj2QaVTig7koAEFQLEThzPkE2v6KMQuTaFtc4khGH'
-    # move_sgn = '249BrKqY9F3r3TZaPTPm1D668y8yogiFSPmXNFVFHxL3gScUzbJGyVVVweNLvZHJFj16QVjn7yL4bWUkAA7D2SAP'
-
-
-    return random_direction, move_addr, move_sgn
+    directions = distribute_character(move_sgn[-3])
+    return directions, move_addr, move_sgn
 
 def maze_run(maze, uuid, tran_id):
 
-    time.sleep(0.5)
+    # time.sleep(0.5)
 
     direction, move_addr, move_sgn = direction_gen()
 
@@ -109,11 +176,16 @@ def maze_run(maze, uuid, tran_id):
     if goal:
         mCurrentTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
+        mPrizeTransaction = transaction.transfer_token(move_addr)
+        print(mPrizeTransaction)
+        # time.sleep(5)
+        # mPrizeTransaction = ''
+
         mSQL3 = "update maze_master set status=0 where status=2;"
         mSQL5 = "update maze_master set status=2, move=%s, finish_dt='%s', " \
-                "winner_addr = '%s', winner_sgn = '%s' " \
+                "winner_addr = '%s', winner_sgn = '%s', prize_txn='%s' " \
                 "where maze_id = '%s';" \
-                % (tran_id, mCurrentTime,move_addr, move_sgn, uuid)
+                % (tran_id, mCurrentTime,move_addr, move_sgn, mPrizeTransaction, uuid)
 
         with general.connectDatabaseMysqlConnector() as dbConnect:
             cursor = dbConnect.cursor()

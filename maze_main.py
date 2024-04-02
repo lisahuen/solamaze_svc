@@ -1,54 +1,37 @@
+# This is the main function to construct the maze
+
 import random
 
-
-# Create a maze using the depth-first algorithm described at
-# https://scipython.com/blog/making-a-maze/
-# Christian Hill, April 2017.
-
 class Cell:
-    """A cell in the maze.
 
-    A maze "Cell" is a point in the grid which may be surrounded by walls to
-    the north, east, south or west.
-
-    """
-
-    # A wall separates a pair of cells in the N-S or W-E directions.
     wall_pairs = {'N': 'S', 'S': 'N', 'E': 'W', 'W': 'E'}
-    # A mapping of cardinal directions to coordinate differences.
     delta = {'W': (-1, 0), 'E': (1, 0), 'S': (0, 1), 'N': (0, -1)}
 
     def __init__(self, x, y):
-        """Initialize the cell at (x,y). At first it is surrounded by walls."""
 
         self.x, self.y = x, y
         self.walls = {'N': True, 'S': True, 'E': True, 'W': True}
 
     def __repr__(self):
-        """return a string representation of a cell"""
+
         return f'({self.x}, {self.y})'
 
     def has_all_walls(self):
-        """Does this cell still have all its walls?"""
 
         return all(self.walls.values())
 
     def knock_down_wall(self, other, wall):
-        """Knock down the wall between cells self and other."""
+
 
         self.walls[wall] = False
         other.walls[Cell.wall_pairs[wall]] = False
 
 
 class Maze:
-    """A Maze, represented as a grid of cells."""
+
 
     def __init__(self, nx, ny,  cx, cy, ix=0, iy=0):
-        """Initialize the maze grid.
-        The maze consists of nx x ny cells and will be constructed starting
-        at the cell indexed at (ix, iy).
 
-        """
 
         self.nx, self.ny = nx, ny
         self.ix, self.iy = ix, iy
@@ -60,21 +43,17 @@ class Maze:
         self.treasure_x = random.randint(0, self.nx - 1)
         self.treasure_y = random.randint(0, self.ny - 1)
 
-        # Give the coordinates of walls that you do *not* wish to be
-        # present in the output here.
+
         self.excluded_walls = [((nx - 1, ny), (nx, ny)),
                                ((0, 0), (0, 1))]
 
-        # Store the solution to the maze
+
         self.solution = None
 
     def cell_at(self, x, y):
-        """Return the Cell object at (x,y)."""
-
         return self.maze_map[x][y]
 
     def __str__(self):
-        """Return a (crude) string representation of the maze."""
 
         maze_rows = ['-' * self.nx * 2]
         for y in range(self.ny):
@@ -98,7 +77,6 @@ class Maze:
 
         success_move = 0
         goal = 0
-        # print(self.cell_at(self.cx, self.cy + 1).walls['N'])
         if movement == 'N' and not self.cell_at(self.cx, self.cy).walls['N']:
              self.cy -= 1
              success_move = 1
@@ -116,8 +94,7 @@ class Maze:
 
         return success_move, goal
 
-    def write_svg(self, filename, solution=False):
-        """Write an SVG image of the maze to filename."""
+    def write_svg(self, filename):
 
         aspect_ratio = self.nx / self.ny
         # Pad the maze all around by this amount.
@@ -129,7 +106,6 @@ class Maze:
         scy, scx = height / self.ny, width / self.nx
 
         def write_wall(f, x1, y1, x2, y2):
-            """Write a single wall to the SVG image file handle f."""
 
             if ((x1, y1), (x2, y2)) in self.excluded_walls:
                 # print(f'Excluding wall at {((x1, y1), (x2, y2))}')
@@ -142,53 +118,13 @@ class Maze:
             pad = 5
             print(f'<rect x="{scx * x + pad}" y="{scy * y + pad}" width="{scx - 2 * pad}"'
                   f' height="{scy - 2 * pad}" style="fill:{colour}" />', file=f)
-            # pad = 5
-            # icon_width = scx - 2 * pad  # Adjust the width of the icon as needed
-            # icon_height = scy - 2 * pad  # Adjust the height of the icon as needed
-            # x_pos = scx * x + pad
-            # y_pos = scy * y + pad
-            # icon_file = './icon.png'  # Replace with the actual path to your JPG file
-            # print('<image xlink:href="{}" x="{}" y="{}" width="{}" height="{}" />'
-            #       .format(icon_file, x_pos, y_pos, icon_width, icon_height), file=f)
+
+        def add_cell_rect_small(f, x, y, colour):
+                pad = 10
+                print(f'<rect x="{scx * x + pad}" y="{scy * y + pad}" width="{scx - 2 * pad}"'
+                      f' height="{scy - 2 * pad}" style="fill:{colour}" />', file=f)
 
 
-        def add_start_icon(f, x, y):
-            pad = 5
-            icon_width = scx - 2 * pad  # Adjust the width of the icon as needed
-            icon_height = scy - 2 * pad  # Adjust the height of the icon as needed
-            x_pos = scx * x + pad
-            y_pos = scy * y + pad
-            icon_file = './start_icon.png'  # Replace with the actual path to your JPG file
-            print('<image xlink:href="{}" x="{}" y="{}" width="{}" height="{}" />'
-                  .format(icon_file, x_pos, y_pos, icon_width, icon_height), file=f)
-
-        def add_end_icon(f, x, y):
-            pad = 5
-            icon_width = scx - 2 * pad  # Adjust the width of the icon as needed
-            icon_height = scy - 2 * pad  # Adjust the height of the icon as needed
-            x_pos = scx * x + pad
-            y_pos = scy * y + pad
-            icon_file = './end_icon.png'  # Replace with the actual path to your JPG file
-            print('<image xlink:href="{}" x="{}" y="{}" width="{}" height="{}" />'
-                  .format(icon_file, x_pos, y_pos, icon_width, icon_height), file=f)
-
-        def add_move_icon(f, x, y):
-            pad = 5
-            icon_width = scx - 2 * pad  # Adjust the width of the icon as needed
-            icon_height = scy - 2 * pad  # Adjust the height of the icon as needed
-            x_pos = scx * x + pad
-            y_pos = scy * y + pad
-            icon_file = './move_icon.png'  # Replace with the actual path to your JPG file
-            print('<image xlink:href="{}" x="{}" y="{}" width="{}" height="{}" />'
-                  .format(icon_file, x_pos, y_pos, icon_width, icon_height), file=f)
-
-        def add_path_segment(f, cell, next_cell):
-            sx1, sy1 = scx * (cell.x + 0.5), scy * (cell.y + 0.5)
-            sx2, sy2 = scx * (next_cell.x + 0.5), scy * (next_cell.y + 0.5)
-            print(f'<line x1="{sx1}" y1="{sy1}" x2="{sx2}" y2="{sy2}" style="stroke:rgb(0,0,255)" />',
-                  file=f)
-
-        # Write the SVG image file for maze
         with open(filename, 'w') as f:
             # SVG preamble and styles.
             print('<?xml version="1.0" encoding="utf-8"?>', file=f)
@@ -203,9 +139,7 @@ class Maze:
             print('    stroke: #aca788;\n    stroke-linecap: round;', file=f)
             print('    stroke-width: 5;\n}', file=f)
             print(']]></style>\n</defs>', file=f)
-            # Draw the "South" and "East" walls of each cell, if present (these
-            # are the "North" and "West" walls of a neighbouring cell in
-            # general, of course).
+
             for x in range(self.nx):
                 for y in range(self.ny):
                     if self.cell_at(x, y).walls['S']:
@@ -215,25 +149,18 @@ class Maze:
                         x1, y1, x2, y2 = x + 1, y, x + 1, y + 1
                         write_wall(f, x1, y1, x2, y2)
 
-            # Draw the North and West maze border, which won't have been drawn
-            # by the procedure above.
+
             for x in range(self.nx):
                 write_wall(f, x, 0, x + 1, 0)
             for y in range(self.ny):
                 write_wall(f, 0, y, 0, y + 1)
 
-            # print('<line x1="0" y1="0" x2="{}" y2="0"/>'.format(width), file=f)
-            # print('<line x1="0" y1="0" x2="0" y2="{}"/>'.format(height), file=f)
+
 
             if self.add_begin_end:
                 add_cell_rect(f, 0, 0, 'green')
-                # add_start_icon(f,0,0)
                 add_cell_rect(f, self.nx - 1, self.ny - 1, 'red')
-                # add_end_icon(f, self.nx - 1, self.ny - 1)
-                add_cell_rect(f, self.cx, self.cy, 'yellow')
-                # add_move_icon(f,self.cx, self.cy)
-                # add_icon(f,3,3)
-                # add_cell_rect(f, self.treasure_x, self.treasure_y, 'yellow')
+                add_cell_rect_small(f, self.cx, self.cy, 'yellow')
 
             print('</svg>', file=f)
 
@@ -251,32 +178,29 @@ class Maze:
                     neighbours.append((direction, neighbour))
         return neighbours
 
-    def get_solution(self):
-        return self.solution
 
     def make_maze(self):
-        # Total number of cells.
+
         n = self.nx * self.ny
         cell_stack = []
         current_cell = self.cell_at(self.ix, self.iy)
-        # Total number of visited cells during maze construction.
+
         nv = 1
 
         while nv < n:
             neighbours = self.find_valid_neighbours(current_cell)
 
             if not neighbours:
-                # We've reached a dead end: backtrack.
+
                 current_cell = cell_stack.pop()
                 continue
 
-            # Choose a random neighbouring cell and move to it.
+
             direction, next_cell = random.choice(neighbours)
             current_cell.knock_down_wall(next_cell, direction)
             cell_stack.append(current_cell)
             current_cell = next_cell
 
-            # Store the solution if we are at the exit cell
             if (current_cell.x == self.nx - 1) and \
                     (current_cell.y == self.ny - 1):
                 self.solution = cell_stack.copy()

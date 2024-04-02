@@ -8,6 +8,14 @@
             "PortNo": 1234
         }
       
+    },
+    "Prize": {
+        "coin_addr": "coin address",
+        "program_id": "program id",
+        "private_key": "private key",
+        "sender_addr": "sender address"
+
+
     }
 
 
